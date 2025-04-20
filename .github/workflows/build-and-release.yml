@@ -30,7 +30,7 @@ jobs:
           OUTPUT: ${{ github.workspace }}/il-manuale-del-buon-dev.epub
           UUID: f9298b0f-bea1-4cb6-a601-2a35027bd44e
         run: |
-          go build -o ./epub-generator .
+          go build -o ./epub-generator ./src
           ./epub-generator
 
       - name: Upload EPUB as artifact
