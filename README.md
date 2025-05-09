@@ -29,7 +29,7 @@ Questo repository contiene il generatore e le risorse per creare la versione ePU
 3. Costruisci il generatore:
 
    ```sh
-   go build -o epub-generator .
+   go build -o ./epub-generator ./src
    ```
 
 4. Genera il file ePUB:
