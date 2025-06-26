@@ -1,3 +1,5 @@
-*.epub
-epub-generator
+/*.epub
+/*.pdf
+/*.mobi
+/epub-generator
 .DS_Store
