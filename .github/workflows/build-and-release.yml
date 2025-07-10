@@ -49,9 +49,10 @@ jobs:
 
       - name: Create GitHub Release (only if tag is present)
         if: github.event_name == 'repository_dispatch' && steps.book_tag.outputs.tag != ''
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: ${{ steps.book_tag.outputs.tag }}
-          files: ${{ github.workspace }}/il-manuale-del-buon-dev.epub
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          generateReleaseNotes: true
+          makeLatest: true
+          tag: ${{ steps.book_tag.outputs.tag }}
+          artifacts: ${{ github.workspace }}/il-manuale-del-buon-dev.epub
+          token: ${{ secrets.GITHUB_TOKEN }}
