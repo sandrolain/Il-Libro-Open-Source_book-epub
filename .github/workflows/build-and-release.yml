@@ -11,7 +11,7 @@ on:
     inputs:
       do_release:
         type: choice
-        description: "Esegui la release?"
+        description: "Esegui la release? (richiesto)"
         required: true
         options:
           - "true"
@@ -19,8 +19,13 @@ on:
         default: "false"
       release_tag:
         type: "string"
-        description: "Tag o nome della release (opzionale, se vuoto usa quello del repo clonato)"
+        description: "Tag della release (opzionale, se vuoto usa quello del repo clonato)"
         required: false
+        default: ""
+      release_name:
+        type: "string"
+        description: "Nome della release (richiesto)"
+        required: true
         default: ""
       release_notes:
         type: "string"
@@ -73,6 +78,7 @@ jobs:
         with:
           generateReleaseNotes: ${{ github.event.inputs.release_notes == '' }}
           makeLatest: true
+          name: ${{ github.event.inputs.release_name }}
           tag: ${{ github.event.inputs.release_tag != '' && github.event.inputs.release_tag || steps.book_tag.outputs.tag }}
           artifacts: ${{ github.workspace }}/il-manuale-del-buon-dev.epub
           token: ${{ secrets.GITHUB_TOKEN }}
