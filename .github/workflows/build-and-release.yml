@@ -10,14 +10,20 @@ on:
   workflow_dispatch:
     inputs:
       do_release:
+        type: choice
         description: "Esegui la release?"
-        required: false
+        required: true
+        options:
+          - "true"
+          - "false"
         default: "false"
       release_tag:
+        type: "string"
         description: "Tag o nome della release (opzionale, se vuoto usa quello del repo clonato)"
         required: false
         default: ""
       release_notes:
+        type: "string"
         description: "Note di rilascio (opzionale)"
         required: false
         default: ""
