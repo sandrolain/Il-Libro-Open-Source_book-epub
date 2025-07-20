@@ -80,7 +80,7 @@ jobs:
         with:
           in: ${{ github.workspace }}/il-manuale-del-buon-dev.epub
           out: ${{ github.workspace }}/il-manuale-del-buon-dev.pdf
-          args: "--verbose --cover ${{ github.workspace }}/assets/cover-pdf.jpg --remove-first-image --pdf-default-font-size 14 --pdf-page-numbers"
+          args: "--verbose --cover /github/workspace/assets/cover-pdf.jpg --remove-first-image --pdf-default-font-size 14 --pdf-page-numbers"
 
       - name: Upload EPUB as artifact
         uses: actions/upload-artifact@v4
