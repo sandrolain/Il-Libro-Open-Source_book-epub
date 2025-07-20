@@ -25,7 +25,7 @@ on:
       release_name:
         type: "string"
         description: "Nome della release (richiesto)"
-        required: true
+        required: false
         default: ""
       release_notes:
         type: "string"
@@ -78,7 +78,7 @@ jobs:
         with:
           generateReleaseNotes: ${{ github.event.inputs.release_notes == '' }}
           makeLatest: true
-          name: ${{ github.event.inputs.release_name }}
+          name: ${{ github.event.inputs.release_name != '' && github.event.inputs.release_name || steps.book_tag.outputs.tag }}
           tag: ${{ github.event.inputs.release_tag != '' && github.event.inputs.release_tag || steps.book_tag.outputs.tag }}
           artifacts: ${{ github.workspace }}/il-manuale-del-buon-dev.epub
           token: ${{ secrets.GITHUB_TOKEN }}
