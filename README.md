@@ -10,6 +10,7 @@ Questo repository contiene il generatore e le risorse per creare la versione ePU
 
 - Go >= 1.24
 - Git
+- [Task](https://taskfile.dev/) (opzionale, per usare i task predefiniti)
 
 ## Build locale
 
@@ -47,6 +48,41 @@ Questo repository contiene il generatore e le risorse per creare la versione ePU
 - `COVER`: percorso dell'immagine di copertina (default: `./assets/cover.jpg`)
 - `STYLE`: percorso del file CSS (default: `./assets/style.css`)
 - `UUID`: UUID del libro (obbligatorio)
+
+## Build con Task
+
+Se hai [Task](https://taskfile.dev/) installato, puoi usare i comandi predefiniti:
+
+```sh
+# Mostra tutti i task disponibili
+task --list
+
+# Genera solo EPUB
+task generate
+
+# Genera EPUB, MOBI e PDF
+task generate-all
+
+# Esegue test e validazioni
+task test
+
+# Task di sviluppo (clean, format, lint, test)
+task dev
+```
+
+### Generazione MOBI e PDF
+
+Il task `generate-all` usa `ebook-convert` per la conversione dell'epub a mobi e pdf:
+
+```sh
+task generate-all
+```
+
+Questo comando:
+
+1. Genera il file EPUB
+2. Converte l'EPUB in MOBI
+3. Converte l'EPUB in PDF con copertina personalizzata
 
 ## Workflow GitHub Actions
 

@@ -4,3 +4,5 @@
 /epub-generator
 .DS_Store
 /.vscode
+bin
+context
