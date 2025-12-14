@@ -1,3 +1,16 @@
+// Package main fornisce un generatore per convertire file Markdown del
+// "Il Libro Open Source" in formato ePUB, MOBI e PDF.
+//
+// Il tool processa una struttura di directory di file Markdown con frontmatter YAML,
+// li converte in HTML usando Goldmark, e li impacchetta in un file ePUB con
+// gerarchia dei capitoli, immagini e styling CSS.
+//
+// Variabili d'ambiente:
+//   - INPUT:  Percorso al repository del libro (default: /tmp/book)
+//   - OUTPUT: Percorso del file ePUB di output (default: ./il-manuale-del-buon-dev.epub)
+//   - COVER:  Percorso all'immagine di copertina (default: ./assets/cover.jpg)
+//   - STYLE:  Percorso al file CSS (default: ./assets/style.css)
+//   - UUID:   UUID identificatore del libro (richiesto)
 package main
 
 import (

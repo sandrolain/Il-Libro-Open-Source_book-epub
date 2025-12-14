@@ -9,14 +9,16 @@ import (
 	"go.abhg.dev/goldmark/frontmatter"
 )
 
-// NewMarkdownConverter crea un nuovo convertitore Goldmark configurato per EPUB
+// NewMarkdownConverter crea un nuovo convertitore Goldmark configurato per ePUB.
+// Include supporto per tabelle, frontmatter YAML e syntax highlighting con Monokai.
+// Genera output XHTML compatibile con lo standard ePUB.
 func NewMarkdownConverter() goldmark.Markdown {
 	return goldmark.New(
 		goldmark.WithExtensions(
 			extension.Table,
 			&frontmatter.Extender{},
 			highlighting.NewHighlighting(
-				highlighting.WithStyle("monokai"),
+				highlighting.WithStyle("pastie"),
 				highlighting.WithFormatOptions(
 					chromahtml.WithLineNumbers(true),
 					chromahtml.WrapLongLines(true),

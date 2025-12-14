@@ -10,51 +10,92 @@ import (
 	"regexp"
 	"slices"
 	"strings"
+	"sync"
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/parser"
 	"go.abhg.dev/goldmark/frontmatter"
 )
 
-// Chapter rappresenta un capitolo del libro con i suoi metadati e contenuto
+// Chapter rappresenta un singolo capitolo o sezione del libro.
+// I capitoli possono essere annidati per creare una gerarchia nel sommario.
 type Chapter struct {
+	// Filename è il nome base senza estensione (es. "introduzione")
 	Filename string
-	Meta     ChapterMeta
-	Content  string
-	Html     string
+
+	// Meta contiene i metadati estratti dal frontmatter YAML
+	Meta ChapterMeta
+
+	// Content è il contenuto Markdown originale dopo la rimozione dei codici Jekyll
+	Content string
+
+	// Html è il contenuto HTML convertito pronto per l'inclusione nell'ePUB
+	Html string
+
+	// Children sono i sotto-capitoli annidati sotto questo capitolo
 	Children []*Chapter
-	Images   []string
+
+	// Images sono i percorsi delle immagini referenziate nel Markdown di questo capitolo
+	Images []string
 }
 
-// ChapterMeta contiene i metadati di un capitolo estratti dal frontmatter
+// ChapterMeta contiene i metadati estratti dal frontmatter YAML.
+// Segue il formato del frontmatter Jekyll usato nel repository sorgente.
 type ChapterMeta struct {
+	// Title è il titolo leggibile del capitolo
 	Title string `yaml:"title"`
-	Order int    `yaml:"nav_order"`
+
+	// Order determina la posizione nel sommario (numeri più bassi vengono prima)
+	Order int `yaml:"nav_order"`
 }
 
 // GetChapters legge e converte i file markdown in capitoli
+// Elabora i file in parallelo per migliorare le performance
 func GetChapters(cv *goldmark.Markdown, mdPath string) ([]*Chapter, error) {
-	slog.Info("Caricamento capitoli", "path", mdPath)
+	slog.Debug("Caricamento capitoli", "path", mdPath)
 
 	files, err := fs.ReadDir(os.DirFS(mdPath), ".")
 	if err != nil {
 		return nil, fmt.Errorf("errore nella lettura della directory %s: %w", mdPath, err)
 	}
 
-	var list []*Chapter
+	// Filtra i file markdown
+	var markdownFiles []fs.DirEntry
 	for _, file := range files {
-		if file.IsDir() || filepath.Ext(file.Name()) != ".md" {
-			continue
+		if !file.IsDir() && filepath.Ext(file.Name()) == ".md" {
+			markdownFiles = append(markdownFiles, file)
 		}
+	}
 
-		chapter, err := processMarkdownFile(cv, mdPath, file.Name())
+	// Processa i file in parallelo
+	list := make([]*Chapter, len(markdownFiles))
+	var wg sync.WaitGroup
+	errChan := make(chan error, len(markdownFiles))
+
+	for i, file := range markdownFiles {
+		wg.Add(1)
+		go func(idx int, f fs.DirEntry) {
+			defer wg.Done()
+			chapter, err := processMarkdownFile(cv, mdPath, f.Name())
+			if err != nil {
+				errChan <- err
+				return
+			}
+			list[idx] = chapter
+		}(i, file)
+	}
+
+	wg.Wait()
+	close(errChan)
+
+	// Verifica errori
+	for err := range errChan {
 		if err != nil {
 			return nil, err
 		}
-
-		list = append(list, chapter)
 	}
 
+	// Ordina i capitoli
 	slices.SortFunc(list, func(a, b *Chapter) int {
 		return a.Meta.Order - b.Meta.Order
 	})
@@ -63,7 +104,9 @@ func GetChapters(cv *goldmark.Markdown, mdPath string) ([]*Chapter, error) {
 	return list, nil
 }
 
-// processMarkdownFile elabora un singolo file markdown
+// processMarkdownFile elabora un singolo file Markdown.
+// Legge il file, rimuove i codici Jekyll, estrae le immagini,
+// converte in HTML e carica eventuali sotto-capitoli.
 func processMarkdownFile(cv *goldmark.Markdown, mdPath, fileName string) (*Chapter, error) {
 	content, err := os.ReadFile(filepath.Join(mdPath, fileName))
 	if err != nil {
@@ -103,7 +146,8 @@ func processMarkdownFile(cv *goldmark.Markdown, mdPath, fileName string) (*Chapt
 	return chapter, nil
 }
 
-// cleanJekyllContent rimuove i codici specifici di Jekyll dal contenuto
+// cleanJekyllContent rimuove i codici specifici di Jekyll dal contenuto.
+// Rimuove pattern come {: .class} e marcatori TOC che non sono compatibili con ePUB.
 func cleanJekyllContent(content []byte) []byte {
 	tempContent := string(content)
 	tempContent = regexp.MustCompile(`\{:[^}]*\}`).ReplaceAllString(tempContent, "")
@@ -111,7 +155,8 @@ func cleanJekyllContent(content []byte) []byte {
 	return []byte(tempContent)
 }
 
-// extractImages estrae i percorsi delle immagini dal contenuto markdown
+// extractImages estrae i percorsi delle immagini dal contenuto Markdown.
+// Usa una regex per trovare tutti i pattern ![alt](path) e restituisce i percorsi.
 func extractImages(content []byte) []string {
 	var images []string
 	re := regexp.MustCompile(`!\[.*?\]\((.*?)\)`)
@@ -124,7 +169,9 @@ func extractImages(content []byte) []string {
 	return images
 }
 
-// convertMarkdownToHTML converte il contenuto markdown in HTML ed estrae i metadati
+// convertMarkdownToHTML converte il contenuto Markdown in HTML ed estrae i metadati.
+// Usa Goldmark per il parsing e converte i tag <br> in <br/> per conformità XHTML.
+// Restituisce l'HTML, i metadati del frontmatter e un eventuale errore.
 func convertMarkdownToHTML(cv *goldmark.Markdown, content []byte) (string, ChapterMeta, error) {
 	ctx := parser.NewContext()
 	var buf bytes.Buffer

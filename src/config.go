@@ -8,6 +8,8 @@ import (
 )
 
 // Config rappresenta la configurazione dell'applicazione
+// Config contiene la configurazione dell'applicazione caricata dalle variabili d'ambiente.
+// Tutti i percorsi sono validati all'avvio per assicurarsi che file e directory esistano.
 type Config struct {
 	Input  string `env:"INPUT" envDefault:"/tmp/book" validate:"required"`
 	Output string `env:"OUTPUT" envDefault:"./il-manuale-del-buon-dev.epub" validate:"required"`
@@ -17,6 +19,8 @@ type Config struct {
 }
 
 // LoadConfig carica e valida la configurazione dalle variabili d'ambiente
+// LoadConfig carica e valida la configurazione dalle variabili d'ambiente.
+// Ritorna un errore se la configurazione non è valida o se i file richiesti non esistono.
 func LoadConfig() (*Config, error) {
 	var cfg Config
 	if err := env.Parse(&cfg); err != nil {

@@ -1,81 +1,193 @@
+/* Base styling con fallback espliciti per compatibilità con e-reader */
 body {
-  font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
   line-height: 1.6;
-  margin: 0;
+  margin: 1em;
   padding: 0;
+  color: #000000;
 }
-h1, h2, h3, h4, h5, h6 {
-  margin: 1em 0 0.5em;
+
+/* Headings con page break hints */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 1.5em 0 0.5em;
+  line-height: 1.3;
+  font-weight: 600;
+  color: #1a1a1a;
+  page-break-after: avoid;
+  -webkit-column-break-after: avoid;
+  break-after: avoid;
 }
+
+h1 {
+  font-size: 2em;
+  page-break-before: always;
+  -webkit-column-break-before: always;
+  break-before: always;
+}
+
+h1:first-child {
+  page-break-before: avoid;
+  -webkit-column-break-before: avoid;
+  break-before: avoid;
+}
+
+h2 {
+  font-size: 1.5em;
+}
+h3 {
+  font-size: 1.25em;
+}
+h4 {
+  font-size: 1.1em;
+}
+h5 {
+  font-size: 1em;
+}
+h6 {
+  font-size: 0.9em;
+}
+
+/* Paragraphs con giustificazione e sillabazione */
 p {
   margin: 0 0 1em;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
 }
+
+/* Links con colori espliciti */
 a {
-  color: #1e90ff;
-  text-decoration: none;
-}
-a:hover {
+  color: #0066cc;
   text-decoration: underline;
+  word-wrap: break-word;
 }
-ul, ol {
+
+a:visited {
+  color: #551a8b;
+}
+
+a:hover {
+  color: #0052a3;
+}
+
+/* Lists */
+ul,
+ol {
   margin: 0 0 1em 1.5em;
   padding: 0;
 }
+
 li {
   margin: 0.5em 0;
 }
+
+/* Code blocks con font stack completo e colori espliciti */
 code {
-  font-family: "Courier New", Courier, monospace;
+  font-family: "Courier New", Courier, "Lucida Console", Monaco, monospace;
+  font-size: 0.9em;
   padding: 0.2em 0.4em;
+  border-radius: 3px;
+  border: 1px solid #e0e0e0;
 }
+
 pre {
-  overflow-x: auto; 
+  background-color: #f5f5f5;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  padding: 0.5em;
+  margin: 1em 0;
+  overflow-x: auto;
   word-wrap: break-word;
+  white-space: pre-wrap;
+  page-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  break-inside: avoid;
 }
+
 pre code {
   display: block;
-  font-family: "Courier New", Courier, monospace;
-  padding: 0.5em 1em;
-  border-radius: 4px;
-  overflow-x: auto; /* Per gestire il contenuto che supera la larghezza */
+  background-color: transparent;
+  border: none;
+  padding: 0;
   line-height: 1.5;
-  font-size: 0.9em; /* Dimensione del testo leggermente ridotta */
-  border: 1px solid currentColor; /* Bordo per definire meglio il blocco */
+  font-size: 0.85em;
 }
+
+/* Syntax highlighting con colori espliciti per migliore compatibilità */
+.chroma {
+  background-color: #f5f5f5 !important;
+  color: #000000 !important;
+}
+
+.chroma .ln {
+  color: #666666;
+  margin-right: 0.5em;
+  user-select: none;
+}
+
+/* Tables con colori espliciti */
 table {
   width: 100%;
   border-collapse: collapse;
   margin: 1em 0;
+  font-size: 0.9em;
+  page-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  break-inside: avoid;
 }
-th, td {
-  border: 1px solid currentColor;
+
+th,
+td {
+  border: 1px solid #666666;
   padding: 0.5em;
   text-align: left;
+  vertical-align: top;
 }
+
 th {
+  background-color: #e0e0e0;
   font-weight: bold;
+  color: #000000;
 }
+
 tr:nth-child(even) {
-  
+  background-color: #f9f9f9;
 }
+
 tr:hover {
-  
+  background-color: #f0f0f0;
 }
+
+/* Blockquotes con colori espliciti */
 blockquote {
   margin: 1em 0;
   padding: 0.5em 1em;
-  border-left: 4px solid currentColor;
+  border-left: 4px solid #666666;
+  background-color: #f9f9f9;
+  font-style: italic;
+  color: #333333;
+  page-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  break-inside: avoid;
 }
 
 blockquote p:last-child {
   margin-bottom: 0;
 }
 
+/* Superscript per note a piè di pagina */
 sup {
-  font-size: 0.8em;
+  font-size: 0.75em;
   vertical-align: super;
-  line-height: 1;
-  margin-left: 0.5em;
+  line-height: 0;
 }
 
 blockquote sup {
@@ -83,8 +195,99 @@ blockquote sup {
   margin-right: 0.5em;
 }
 
+/* Horizontal rules */
 hr {
   border: none;
-  border-top: 1px solid currentColor;
+  border-top: 1px solid #cccccc;
   margin: 2em 0;
+}
+
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1em auto;
+}
+
+/* Figure captions */
+figcaption {
+  font-size: 0.9em;
+  font-style: italic;
+  text-align: center;
+  margin-top: 0.5em;
+  color: #666666;
+}
+
+/* Media query per supporto dark mode (ePUB 3.2+) */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #ffffff;
+  }
+
+  a {
+    color: #66b3ff;
+  }
+
+  a:visited {
+    color: #b19cd9;
+  }
+
+  a:hover {
+    color: #99ccff;
+  }
+
+  code {
+    background-color: #2a2a2a;
+    border-color: #444444;
+    color: #e0e0e0;
+  }
+
+  pre {
+    background-color: #2a2a2a;
+    border-color: #444444;
+  }
+
+  .chroma {
+    background-color: #2a2a2a !important;
+    color: #e0e0e0 !important;
+  }
+
+  th {
+    background-color: #333333;
+    color: #ffffff;
+  }
+
+  th,
+  td {
+    border-color: #444444;
+  }
+
+  tr:nth-child(even) {
+    background-color: #252525;
+  }
+
+  tr:hover {
+    background-color: #2d2d2d;
+  }
+
+  blockquote {
+    background-color: #252525;
+    border-left-color: #666666;
+    color: #cccccc;
+  }
+
+  hr {
+    border-top-color: #444444;
+  }
 }
